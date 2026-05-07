@@ -18,8 +18,8 @@ public class RestAIAssistantController {
         return aiAssistantService.carInfo(rawText);
     }
     @PostMapping("/classify")
-    public String classify(@RequestBody String comment){
-        return aiAssistantService.classifyCustomerComment(comment);
+    public String classifySecure(@RequestBody String comment){
+        return aiAssistantService.classifyCommentSecurely(comment);
     }
     @GetMapping("/secure-chat")
     public String secureChat(@RequestParam String message,@RequestParam String chatId) {
