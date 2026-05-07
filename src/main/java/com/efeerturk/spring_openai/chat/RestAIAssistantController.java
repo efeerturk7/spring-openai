@@ -2,6 +2,7 @@ package com.efeerturk.spring_openai.chat;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 @RequiredArgsConstructor
 @RestController
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 public class RestAIAssistantController {
     private final AIAssistantService aiAssistantService;
     @GetMapping("/generate-ad")
-    public String generateAd(@RequestParam String brand,@RequestParam String model){
+    public Flux<String> generateAd(@RequestParam String brand, @RequestParam String model){
         return aiAssistantService.generateCarAd(brand,model);
     }
     @PostMapping("/extract")
@@ -19,5 +20,9 @@ public class RestAIAssistantController {
     @PostMapping("/classify")
     public String classify(@RequestBody String comment){
         return aiAssistantService.classifyCustomerComment(comment);
+    }
+    @GetMapping("/secure-chat")
+    public String secureChat(@RequestParam String message,@RequestParam String chatId) {
+        return aiAssistantService.secureChat(message,chatId);
     }
 }
