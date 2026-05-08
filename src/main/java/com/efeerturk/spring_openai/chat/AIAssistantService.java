@@ -5,19 +5,31 @@ import org.springframework.ai.chat.client.ChatClient;
 
 
 
+
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.embedding.EmbeddingModel;
+
 import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 
+
 @Service
 public class AIAssistantService {
     private final ChatClient chatClient;
+    private final EmbeddingModel embeddingModel;
 
-    public AIAssistantService(ChatClient.Builder builder) {
+
+    public AIAssistantService(ChatClient.Builder builder,EmbeddingModel embeddingModel) {
+        this.embeddingModel=embeddingModel;
+
 
         this.chatClient = builder.defaultAdvisors(new SafeGuardAdvisor()).build();
+    }
+    public float[] generateEmbedding(String text){
+        return embeddingModel.embed(text);
+
     }
     public Flux<String> generateCarAd(String brand, String model){
         return chatClient.prompt()

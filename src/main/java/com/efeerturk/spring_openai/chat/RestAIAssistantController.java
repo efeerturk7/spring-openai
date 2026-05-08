@@ -10,7 +10,7 @@ import reactor.core.publisher.Flux;
 public class RestAIAssistantController {
     private final AIAssistantService aiAssistantService;
     @GetMapping("/generate-ad")
-    public Flux<String> generateAd(@RequestParam String brand, @RequestParam String model){
+    public Flux<String> generateCarAd(@RequestParam String brand, @RequestParam String model){
         return aiAssistantService.generateCarAd(brand,model);
     }
     @PostMapping("/extract")
@@ -24,5 +24,9 @@ public class RestAIAssistantController {
     @GetMapping("/secure-chat")
     public String secureChat(@RequestParam String message,@RequestParam String chatId) {
         return aiAssistantService.secureChat(message,chatId);
+    }
+    @GetMapping("/embed")
+    public float[]embedText(@RequestParam String text){
+        return aiAssistantService.generateEmbedding(text);
     }
 }
