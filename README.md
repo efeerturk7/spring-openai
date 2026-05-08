@@ -60,6 +60,9 @@ Implemented a custom `SafeGuardAdvisor` utilizing both `CallAdvisor` and `Stream
 
 ### 5. 🗂️ Embeddings & Vector Space Foundation
 * Successfully integrated `EmbeddingModel` to convert plain text into high-dimensional mathematical vectors, laying the groundwork for full **RAG (Retrieval-Augmented Generation)** integration.
+### 6. 👁️ Multimodal AI (Vision / Image-to-Text)
+* **Local Visual Processing:** Integrated the **LLaVA** model to process physical image files (`MultipartFile`) locally without relying on paid, cloud-based vision APIs (like OpenAI Vision).
+* **Automated Expertise:** Analyzes uploaded car photos and generates detailed text-based condition reports (e.g., detecting scratches, dents, or identifying car models).
 
 ---
 
@@ -82,9 +85,10 @@ Implemented a custom `SafeGuardAdvisor` utilizing both `CallAdvisor` and `Stream
 Since the project uses a local LLM, you need to have Ollama installed and running.
 
 1.  **Install and Start Ollama:**
-    Download Ollama and pull the Llama 3 model in your terminal:
+    Download Ollama and pull both the Llama 3 (Text) and LLaVA (Vision) models in your terminal:
     ```bash
     ollama run llama3
+    ollama pull llava
     ```
 
 2.  **Clone the repository:**
@@ -103,6 +107,7 @@ Since the project uses a local LLM, you need to have Ollama installed and runnin
 4.  **Test the Endpoints:**
     * Chat: `GET http://localhost:8082/api/spring-ai/secure-chat?chatId=1&message=Hello`
     * Stream Ad: `GET http://localhost:8082/api/spring-ai/generate-ad?brand=BMW&model=M3`
+    * Image-to-text: `POST http://localhost:8082/api/spring-ai/analyze-image` | Uploads an image (`multipart/form-data`) and uses the LLaVA model to extract physical car details and damage reports. |
 
 ---
 

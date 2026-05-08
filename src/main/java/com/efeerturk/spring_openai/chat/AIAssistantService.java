@@ -7,10 +7,13 @@ import org.springframework.ai.chat.client.ChatClient;
 
 
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.content.Media;
 import org.springframework.ai.embedding.EmbeddingModel;
 
 import org.springframework.ai.ollama.api.OllamaChatOptions;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeTypeUtils;
 import reactor.core.publisher.Flux;
 
 
@@ -26,6 +29,14 @@ public class AIAssistantService {
 
 
         this.chatClient = builder.defaultAdvisors(new SafeGuardAdvisor()).build();
+    }
+    public String analyzeCarImage(Resource imageResource,String prompt){
+        return chatClient.prompt()
+                .options(OllamaChatOptions.builder().model("llava").temperature(0.5))
+                .user(u -> u.text(prompt)
+                        .media(new Media(MimeTypeUtils.IMAGE_JPEG,imageResource)))
+                .call()
+                .content();
     }
     public float[] generateEmbedding(String text){
         return embeddingModel.embed(text);

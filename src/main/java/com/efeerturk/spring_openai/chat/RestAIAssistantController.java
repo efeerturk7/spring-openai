@@ -1,8 +1,12 @@
 package com.efeerturk.spring_openai.chat;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
+
+import java.awt.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,5 +32,13 @@ public class RestAIAssistantController {
     @GetMapping("/embed")
     public float[]embedText(@RequestParam String text){
         return aiAssistantService.generateEmbedding(text);
+    }
+    @PostMapping(value = "/analyze-image",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String analyzeImage(@RequestParam("file") MultipartFile file,@RequestParam(defaultValue = "Bu fotoğraftaki arabanın markasını,rengini ve fiziksel durumunu (hasar,çizik vb.) detaylıca Türkçe olarak analiz et.")String message){
+        try {
+            return aiAssistantService.analyzeCarImage(file.getResource(),message);
+        }catch (Exception e){
+            throw new RuntimeException("Görsel işlenirken hata oluştu : "+e.getMessage());
+        }
     }
 }
