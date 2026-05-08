@@ -2,7 +2,7 @@
 
 ![Java](https://img.shields.io/badge/Java-25-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
-![Spring AI](https://img.shields.io/badge/Spring_AI-1.0.0--M6-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
+![Spring AI](https://img.shields.io/badge/Spring_AI-2.0.0--M5-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
 ![Ollama](https://img.shields.io/badge/Ollama-Local_LLM-000000?style=for-the-badge&logo=linux&logoColor=white)
 ![Llama 3](https://img.shields.io/badge/Model-Llama_3-0466C8?style=for-the-badge&logo=meta&logoColor=white)
 ![Project Reactor](https://img.shields.io/badge/WebFlux-Reactive-2088FF?style=for-the-badge&logo=react&logoColor=white)
