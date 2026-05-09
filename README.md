@@ -63,20 +63,25 @@ Implemented a custom `SafeGuardAdvisor` utilizing both `CallAdvisor` and `Stream
 ### 6. 👁️ Multimodal AI (Vision / Image-to-Text)
 * **Local Visual Processing:** Integrated the **LLaVA** model to process physical image files (`MultipartFile`) locally without relying on paid, cloud-based vision APIs (like OpenAI Vision).
 * **Automated Expertise:** Analyzes uploaded car photos and generates detailed text-based condition reports (e.g., detecting scratches, dents, or identifying car models).
+### 7. 📚 Local RAG Architecture (Retrieval-Augmented Generation)
+Implemented a complete "Open Book" RAG pipeline to chat with private company policies without exposing data to external APIs.
+* **Ingestion Pipeline (ETL):** Utilizes `TokenTextSplitter` (Builder Pattern) to chunk large documents and the local `mxbai-embed-large` model to convert text into mathematical vectors, storing them in an in-memory `SimpleVectorStore`.
+* **Retrieval Pipeline:** Performs Semantic Search (Cosine Similarity) to find the Top-K relevant context blocks and securely augments the prompt before generating a response with Llama 3.
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Category | Technology                                 |
-| :--- |:-------------------------------------------|
-| **Language** | Java 25                                    |
-| **Framework** | Spring Boot 3.x                            |
-| **AI Integration** | Spring AI (2.0.0-M5)                       |
-| **LLM Engine** | Ollama (Local)                             |
-| **AI Model** | Meta Llama 3                               |
-| **Reactive Stack** | Spring WebFlux (Project Reactor)           |
-| **Architecture** | Interceptors, Advisors, Few-Shot Prompting |
+| Category            | Technology                                 |
+|:--------------------|:-------------------------------------------|
+| **Language**        | Java 25                                    |
+| **Framework**       | Spring Boot 3.x                            |
+| **AI Integration**  | Spring AI (2.0.0-M5)                       |
+| **LLM Engine**      | Ollama (Local)                             |
+| **AI Model**        | Meta Llama 3                               |
+| **Reactive Stack**  | Spring WebFlux (Project Reactor)           |
+| **Architecture**    | Interceptors, Advisors, Few-Shot Prompting |
+| **Vector DB / RAG** | SimpleVectorStore, mxbai-embed-large |
 
 ---
 
@@ -85,10 +90,11 @@ Implemented a custom `SafeGuardAdvisor` utilizing both `CallAdvisor` and `Stream
 Since the project uses a local LLM, you need to have Ollama installed and running.
 
 1.  **Install and Start Ollama:**
-    Download Ollama and pull both the Llama 3 (Text) and LLaVA (Vision) models in your terminal:
+    Download Ollama and pull the required models in your terminal:
     ```bash
-    ollama run llama3
-    ollama pull llava
+    ollama run llama3               # Text Generation (Chat)
+    ollama pull llava               # Vision (Image-to-Text)
+    ollama pull mxbai-embed-large   # Embeddings (Vector Math for RAG)
     ```
 
 2.  **Clone the repository:**
@@ -107,7 +113,9 @@ Since the project uses a local LLM, you need to have Ollama installed and runnin
 4.  **Test the Endpoints:**
     * Chat: `GET http://localhost:8082/api/spring-ai/secure-chat?chatId=1&message=Hello`
     * Stream Ad: `GET http://localhost:8082/api/spring-ai/generate-ad?brand=BMW&model=M3`
-    * Image-to-text: `POST http://localhost:8082/api/spring-ai/analyze-image` | Uploads an image (`multipart/form-data`) and uses the LLaVA model to extract physical car details and damage reports. |
+    * Image-to-text: `POST http://localhost:8082/api/spring-ai/analyze-image` | Uploads an image (`multipart/form-data`) and uses the LLaVA model to extract physical car details and damage reports.|
+    * Ingestion pipeline: `POST http://localhost:8082/api/spring-ai/rag/ingest | Chunks raw text, creates embeddings, and saves to Vector Store. |
+    * Retrieval pipeline : `GET http://localhost:8082/api/spring-ai/rag/ask | Answers questions strictly based on the ingested internal company data. |
 
 ---
 

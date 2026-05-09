@@ -1,4 +1,4 @@
-package com.efeerturk.spring_openai.chat;
+package com.efeerturk.spring_openai.chat.advisor;
 
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;

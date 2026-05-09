@@ -1,4 +1,4 @@
-package com.efeerturk.spring_openai.chat;
+package com.efeerturk.spring_openai.chat.Dto;
 
 import lombok.Data;
 
