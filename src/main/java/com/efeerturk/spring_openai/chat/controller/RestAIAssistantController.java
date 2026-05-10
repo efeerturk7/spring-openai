@@ -3,6 +3,7 @@ package com.efeerturk.spring_openai.chat.controller;
 import com.efeerturk.spring_openai.chat.Dto.CarDto;
 import com.efeerturk.spring_openai.chat.service.AIAssistantService;
 import com.efeerturk.spring_openai.chat.service.AdvancedRagIngestionService;
+import com.efeerturk.spring_openai.chat.service.AgentService;
 import com.efeerturk.spring_openai.chat.service.RagIngestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -17,6 +18,7 @@ public class RestAIAssistantController {
     private final AIAssistantService aiAssistantService;
     private final RagIngestionService ragIngestionService;
     private final AdvancedRagIngestionService advancedRagIngestionService;
+    private final AgentService agentService;
     @GetMapping("/generate-ad")
     public Flux<String> generateCarAd(@RequestParam String brand, @RequestParam String model){
         return aiAssistantService.generateCarAd(brand,model);
@@ -54,11 +56,15 @@ public class RestAIAssistantController {
         return aiAssistantService.askToCompanyHandbook(question);
     }
     @PostMapping("/advanced-ingest")
-    public void ingestWithMetadata(String text,String documentCategory){
+    public void ingestWithMetadata(@RequestParam String text,@RequestParam String documentCategory){
          advancedRagIngestionService.ingestWithMetadata(text,documentCategory);
     }
     @GetMapping("/advanced-ask")
-    public String askWithAdvancedRag(String question,String categoryFilter){
+    public String askWithAdvancedRag(@RequestParam String question,@RequestParam String categoryFilter){
         return advancedRagIngestionService.askWithAdvancedRag(question,categoryFilter);
+    }
+    @GetMapping("/askAgent")
+    public String askAgent(@RequestParam String question){
+        return agentService.askAgent(question);
     }
 }

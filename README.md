@@ -67,10 +67,16 @@ Implemented a custom `SafeGuardAdvisor` utilizing both `CallAdvisor` and `Stream
 Implemented a complete "Open Book" RAG pipeline to chat with private company policies without exposing data to external APIs.
 * **Ingestion Pipeline (ETL):** Utilizes `TokenTextSplitter` (Builder Pattern) to chunk large documents and the local `mxbai-embed-large` model to convert text into mathematical vectors, storing them in an in-memory `SimpleVectorStore`.
 * **Retrieval Pipeline:** Performs Semantic Search (Cosine Similarity) to find the Top-K relevant context blocks and securely augments the prompt before generating a response with Llama 3.
-### 🚀 Enterprise-Grade Advanced RAG Architecture
+### 🚀8. Enterprise-Grade Advanced RAG Architecture
 * **Persistent Vector Storage:** Transitioned from in-memory storage to **PostgreSQL (PgVector)** for robust, scalable, and persistent vector embedding management.
 * **Metadata Filtering:** Implemented precise document retrieval using contextual metadata (e.g., department, category), preventing data leakage and AI hallucinations.
 * **Clean Architecture:** Structured the RAG pipeline using industry-standard design patterns, decoupling configuration, ingestion (ETL), and retrieval services.
+### 9. 🤖 AI Agent & Tool Calling (Function Calling)
+Transformed the LLM from a passive chatbot into an active **AI Agent** capable of interacting with backend Java services in real-time.
+* **Dynamic Function Discovery:** Utilized Spring AI's `.tools()` API to register Java `Function` beans (e.g., `carStockCheckTool`) as executable tools for the AI.
+* **Real-Time Data Access (Zero Hallucination):** When a user asks about car inventory or prices, the AI autonomously pauses text generation, triggers the backend Java service to query the simulated database, and uses the deterministic `StockResponse` to generate a 100% accurate, up-to-date reply.
+* **Declarative Tooling:** Tools are strictly defined using Java `record` types for inputs/outputs and the `@Description` annotation, allowing the local Llama 3 model to accurately decide *when* and *how* to invoke the method without exposing sensitive backend logic.
+
 
 ---
 
@@ -128,8 +134,10 @@ Since the project uses a local LLM, you need to have Ollama installed and runnin
     * Image-to-text: `POST http://localhost:8082/api/spring-ai/analyze-image` | Uploads an image (`multipart/form-data`) and uses the LLaVA model to extract physical car details and damage reports.|
     * Ingestion pipeline: `POST http://localhost:8082/api/spring-ai/rag/ingest` | Chunks raw text, creates embeddings, and saves to Vector Store. |
     * Retrieval pipeline : `GET http://localhost:8082/api/spring-ai/rag/ask` | Answers questions strictly based on the ingested internal company data. |
-    * Advanced Ingest: `POST http://localhost:8082/api/spring-ai/rag/advanced-ingest` | Ingests raw text, adds metadata (category/dept), and saves to PgVector. |
-    * Advanced Ask: `GET http://localhost:8082/api/spring-ai/rag/advanced-ask` | Queries the AI using Advanced RAG with strict metadata filtering. |
+    * Advanced Ingest: `POST http://localhost:8082/api/spring-ai/advanced-ingest` | Ingests raw text, adds metadata (category/dept), and saves to PgVector. |
+    * Advanced Ask: `GET http://localhost:8082/api/spring-ai/advanced-ask` | Queries the AI using Advanced RAG with strict metadata filtering. |
+    * Agent Tool Calling: `GET http://localhost:8082/api/spring-ai/askAgent` | Triggers the AI Agent. The AI autonomously pauses, calls the backend Java method (`carStockCheckTool`) to fetch real database data, and returns an accurate response without hallucinating.
+
 
 ---
 
