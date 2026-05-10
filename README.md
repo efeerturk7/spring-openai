@@ -85,10 +85,10 @@ Implemented a complete "Open Book" RAG pipeline to chat with private company pol
 | **AI Model**        | Meta Llama 3                               |
 | **Reactive Stack**  | Spring WebFlux (Project Reactor)           |
 | **Architecture**    | Interceptors, Advisors, Few-Shot Prompting |
-| **Vector DB / RAG** | SimpleVectorStore, mxbai-embed-large |
-| **Vector Database** | PostgreSQL, PgVector Extension |
-| **AI Framework** | Spring AI (1.0.0-M6) |
-| **Embedding Model** | mxbai-embed-large (via Ollama) |
+| **Vector DB / RAG** | SimpleVectorStore, mxbai-embed-large       |
+| **Vector Database** | PostgreSQL, PgVector Extension             |
+| **AI Framework** | Spring AI (2.0.0-M5)                       |
+| **Embedding Model** | mxbai-embed-large (via Ollama)             |
 
 ---
 ## 🧠 Advanced RAG Workflow (How it works)
