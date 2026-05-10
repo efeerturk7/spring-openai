@@ -67,6 +67,10 @@ Implemented a custom `SafeGuardAdvisor` utilizing both `CallAdvisor` and `Stream
 Implemented a complete "Open Book" RAG pipeline to chat with private company policies without exposing data to external APIs.
 * **Ingestion Pipeline (ETL):** Utilizes `TokenTextSplitter` (Builder Pattern) to chunk large documents and the local `mxbai-embed-large` model to convert text into mathematical vectors, storing them in an in-memory `SimpleVectorStore`.
 * **Retrieval Pipeline:** Performs Semantic Search (Cosine Similarity) to find the Top-K relevant context blocks and securely augments the prompt before generating a response with Llama 3.
+### 🚀 Enterprise-Grade Advanced RAG Architecture
+* **Persistent Vector Storage:** Transitioned from in-memory storage to **PostgreSQL (PgVector)** for robust, scalable, and persistent vector embedding management.
+* **Metadata Filtering:** Implemented precise document retrieval using contextual metadata (e.g., department, category), preventing data leakage and AI hallucinations.
+* **Clean Architecture:** Structured the RAG pipeline using industry-standard design patterns, decoupling configuration, ingestion (ETL), and retrieval services.
 
 ---
 
@@ -82,8 +86,16 @@ Implemented a complete "Open Book" RAG pipeline to chat with private company pol
 | **Reactive Stack**  | Spring WebFlux (Project Reactor)           |
 | **Architecture**    | Interceptors, Advisors, Few-Shot Prompting |
 | **Vector DB / RAG** | SimpleVectorStore, mxbai-embed-large |
+| **Vector Database** | PostgreSQL, PgVector Extension |
+| **AI Framework** | Spring AI (1.0.0-M6) |
+| **Embedding Model** | mxbai-embed-large (via Ollama) |
 
 ---
+## 🧠 Advanced RAG Workflow (How it works)
+1.  **Ingestion Pipeline (ETL):** Corporate documents are ingested, labeled with specific metadata tags (e.g., `category='HR_Policies'`), chunked optimally using `TokenTextSplitter`, and embedded into a PostgreSQL Vector Database.
+2.  **Dynamic Search Request:** When a user asks a question, a dynamic `SearchRequest` is generated, applying strict metadata filters (SQL-like WHERE clauses on vectors).
+3.  **Semantic Retrieval:** The system performs Cosine Similarity search on PgVector to retrieve only the top-K relevant and authorized document chunks.
+4.  **Context Augmentation & Generation:** The retrieved chunks are seamlessly injected into the LLM's system prompt, forcing the model to generate accurate answers strictly based on the provided corporate context.
 
 ## ⚙️ How to Run Locally
 
@@ -114,8 +126,10 @@ Since the project uses a local LLM, you need to have Ollama installed and runnin
     * Chat: `GET http://localhost:8082/api/spring-ai/secure-chat?chatId=1&message=Hello`
     * Stream Ad: `GET http://localhost:8082/api/spring-ai/generate-ad?brand=BMW&model=M3`
     * Image-to-text: `POST http://localhost:8082/api/spring-ai/analyze-image` | Uploads an image (`multipart/form-data`) and uses the LLaVA model to extract physical car details and damage reports.|
-    * Ingestion pipeline: `POST http://localhost:8082/api/spring-ai/rag/ingest | Chunks raw text, creates embeddings, and saves to Vector Store. |
-    * Retrieval pipeline : `GET http://localhost:8082/api/spring-ai/rag/ask | Answers questions strictly based on the ingested internal company data. |
+    * Ingestion pipeline: `POST http://localhost:8082/api/spring-ai/rag/ingest` | Chunks raw text, creates embeddings, and saves to Vector Store. |
+    * Retrieval pipeline : `GET http://localhost:8082/api/spring-ai/rag/ask` | Answers questions strictly based on the ingested internal company data. |
+    * Advanced Ingest: `POST http://localhost:8082/api/spring-ai/rag/advanced-ingest` | Ingests raw text, adds metadata (category/dept), and saves to PgVector. |
+    * Advanced Ask: `GET http://localhost:8082/api/spring-ai/rag/advanced-ask` | Queries the AI using Advanced RAG with strict metadata filtering. |
 
 ---
 

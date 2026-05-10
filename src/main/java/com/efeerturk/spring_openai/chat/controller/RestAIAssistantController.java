@@ -2,6 +2,7 @@ package com.efeerturk.spring_openai.chat.controller;
 
 import com.efeerturk.spring_openai.chat.Dto.CarDto;
 import com.efeerturk.spring_openai.chat.service.AIAssistantService;
+import com.efeerturk.spring_openai.chat.service.AdvancedRagIngestionService;
 import com.efeerturk.spring_openai.chat.service.RagIngestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Flux;
 public class RestAIAssistantController {
     private final AIAssistantService aiAssistantService;
     private final RagIngestionService ragIngestionService;
+    private final AdvancedRagIngestionService advancedRagIngestionService;
     @GetMapping("/generate-ad")
     public Flux<String> generateCarAd(@RequestParam String brand, @RequestParam String model){
         return aiAssistantService.generateCarAd(brand,model);
@@ -50,5 +52,13 @@ public class RestAIAssistantController {
     @GetMapping("/rag/ask")
     public String askQuestion(@RequestParam String question){
         return aiAssistantService.askToCompanyHandbook(question);
+    }
+    @PostMapping("/advanced-ingest")
+    public void ingestWithMetadata(String text,String documentCategory){
+         advancedRagIngestionService.ingestWithMetadata(text,documentCategory);
+    }
+    @GetMapping("/advanced-ask")
+    public String askWithAdvancedRag(String question,String categoryFilter){
+        return advancedRagIngestionService.askWithAdvancedRag(question,categoryFilter);
     }
 }

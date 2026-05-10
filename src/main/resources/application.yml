@@ -7,3 +7,16 @@ spring:
       chat:
         options:
           model: llama3
+    vectorstore:
+      pgvector:
+        dimension: 1024
+        distance-type: COSINE
+        initialize-schema: true
+
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: 1
+    driver-class-name: org.postgresql.Driver
