@@ -23,10 +23,10 @@ The API runs locally using your machine's hardware to process the Llama 3 model 
 
 ## 🏗 System Architecture & Workflow
 
-### 🔄 Request Lifecycle (AI Processing Flow)
-How a prompt travels securely from the user to the LLM and back:
+### 🔄 Request Lifecycle (AI Processing Flow with HITL)
+How a prompt travels securely from the user, gets evaluated, and waits for human approval:
 
-> **🌍 Client Request** 👉  **🛡️ SafeGuard Advisor (Security Check)** 👉  **🧠 System Prompt & Context Injection** 👉  **🤖 Ollama (Llama 3 Execution)** 👉  **⚡ Reactive Stream / JSON Output**
+> **🌍 Client Request** 👉  **🛡️ SafeGuard Advisor** 👉  **🧠 Context Injection** 👉 **🤖 AI Generates Plan** 👉 **⏸️ PAUSE (Saved to Postgres)** 👉 **👨‍💻 Human Approves** 👉 **▶️ RESUME (AI Executes Tools)** 👉 **⚡ Reactive JSON Output**
 
 ### ⚙️ Runtime Architecture
 How the application handles complex AI tasks in production:
@@ -82,6 +82,12 @@ Evolved the AI from executing single tasks to managing complex, multi-step opera
 * **Internal RAG Tool:** The Agent can cross-reference external findings with internal PostgreSQL vector data (PgVector) without human intervention.
 * **File System & Diagram Tool:** The Agent automatically translates its analytical findings into visual Mermaid.js architecture diagrams and saves them directly to the local file system.
 * **Security Review Workflow:** A complete end-to-end use case where the AI gathers external data, checks internal policies, identifies vulnerabilities, and outputs an executive summary alongside a generated threat diagram.
+### 11. ⏸️ Human-in-the-Loop (HITL) & Checkpoint State Machine
+Integrated a robust pause-and-resume architecture to prevent autonomous AI from making critical decisions without human oversight.
+* **State Persistence:** Utilizes PostgreSQL (via Spring Data R2DBC) to serialize and save the AI's complex prompt context and execution plan into a database.
+* **Pause & Resume Execution:** The AI automatically pauses execution upon reaching the `WAITING_HUMAN_APPROVAL` state. It completely drops from memory to save server resources.
+* **Human Intervention:** Exposes secure endpoints for administrators to review the AI's generated plan and either `Approve` (resuming the workflow seamlessly) or `Reject` (aborting the operation).
+* **Fault Tolerance:** Built-in retry mechanisms prevent malformed JSON plans from crashing the pipeline, ensuring a stable state machine.
 
 
 ---
@@ -146,6 +152,9 @@ Since the project uses a local LLM, you need to have Ollama installed and runnin
     * Advanced Ask: `GET http://localhost:8082/api/spring-ai/advanced-ask` | Queries the AI using Advanced RAG with strict metadata filtering. |
     * Agent Tool Calling: `GET http://localhost:8082/api/spring-ai/askAgent` | Triggers the AI Agent. The AI autonomously pauses, calls the backend Java method (`carStockCheckTool`) to fetch real database data, and returns an accurate response without hallucinating.
     * Security Review Agent: `POST http://localhost:8082/api/spring-ai/agent/security-review` | Triggers a chained workflow. The Agent fetches data from the provided URL, cross-references with internal RAG, and generates a vulnerability report along with a Mermaid diagram saved to the local disk.
+    * HITL - Start Agent:** `POST http://localhost:8082/api/spring-ai/hitl/start` | Initiates the security review. The AI generates a plan, saves it to PostgreSQL, and returns a Task ID (Pauses execution).
+    * HITL - Approve:** `POST http://localhost:8082/api/spring-ai/hitl/{id}/approve` | Administrator approves the plan. The AI retrieves context from the DB and resumes execution using Tools (RAG/Web).
+    * HITL - Reject:** `POST http://localhost:8082/api/spring-ai/hitl/{id}/reject` | Administrator aborts the AI workflow securely.
 
 
 ---
