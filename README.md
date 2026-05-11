@@ -38,6 +38,13 @@ How the application handles complex AI tasks in production:
 5.  **🤖 Local LLM (Ollama):** Processes the data securely on local hardware.
 
 ---
+### 🌐 MCP (Remote) Tool Discovery Flow
+How the AI dynamically learns new skills from remote servers:
+
+1. **🤝 Handshake:** Agent (`McpClient`) connects to remote Vehicle Posture API (`McpServer`) via SSE.
+2. **🔍 Discovery:** Agent requests available capabilities (`mcpClient.listTools()`).
+3. **💉 Injection:** Server responds with tool schemas, which are dynamically injected into Llama 3's context.
+4. **🚀 Execution:** AI autonomously decides to call the remote server during a chat if it needs vehicle inspection data.
 
 ## 🚀 Key Technical Features (Advanced AI Implementation)
 
@@ -88,6 +95,11 @@ Integrated a robust pause-and-resume architecture to prevent autonomous AI from 
 * **Pause & Resume Execution:** The AI automatically pauses execution upon reaching the `WAITING_HUMAN_APPROVAL` state. It completely drops from memory to save server resources.
 * **Human Intervention:** Exposes secure endpoints for administrators to review the AI's generated plan and either `Approve` (resuming the workflow seamlessly) or `Reject` (aborting the operation).
 * **Fault Tolerance:** Built-in retry mechanisms prevent malformed JSON plans from crashing the pipeline, ensuring a stable state machine.
+### 12. 🔌 Model Context Protocol (MCP) Integration
+Implemented Anthropic's cutting-edge MCP architecture, transforming the AI from a closed system into a universally extensible network.
+* **Direct Client-to-Server Discovery:** The Spring AI Agent acts as an `McpClient`, dynamically discovering and injecting remote tools (e.g., Vehicle Posture/Inspection Service) at runtime without hardcoded tool definitions.
+* **Decoupled Architecture:** Follows microservice best practices by separating the LLM reasoning engine from the actual data-fetching servers using `SseServerTransport` (Streamable HTTP).
+* **Universal Tooling:** The built-in MCP Server (`VehiclePostureMcpServer`) is completely protocol-compliant, meaning it can be directly attached to external AI clients like **Claude Desktop** or **Cursor IDE**, independent of the Spring Boot application.
 
 
 ---
@@ -109,6 +121,8 @@ Integrated a robust pause-and-resume architecture to prevent autonomous AI from 
 | **Embedding Model** | mxbai-embed-large (via Ollama)             |
 | **Workflow Engine** | Spring AI Chained Workflows                |
 | **Visualization**   | Mermaid.js (AI-Generated Architecture)     |
+| **Protocol**        | Model Context Protocol (MCP) via SSE       |
+| **Remote Tooling**  | Spring AI MCP Server & Client APIs         |
 
 ---
 ## 🧠 Advanced RAG Workflow (How it works)
