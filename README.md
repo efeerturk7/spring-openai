@@ -76,6 +76,12 @@ Transformed the LLM from a passive chatbot into an active **AI Agent** capable o
 * **Dynamic Function Discovery:** Utilized Spring AI's `.tools()` API to register Java `Function` beans (e.g., `carStockCheckTool`) as executable tools for the AI.
 * **Real-Time Data Access (Zero Hallucination):** When a user asks about car inventory or prices, the AI autonomously pauses text generation, triggers the backend Java service to query the simulated database, and uses the deterministic `StockResponse` to generate a 100% accurate, up-to-date reply.
 * **Declarative Tooling:** Tools are strictly defined using Java `record` types for inputs/outputs and the `@Description` annotation, allowing the local Llama 3 model to accurately decide *when* and *how* to invoke the method without exposing sensitive backend logic.
+### 10. ⛓️ Chained Workflows & Multi-Tool Autonomous Agents
+Evolved the AI from executing single tasks to managing complex, multi-step operations using a Chained Workflow architecture.
+* **Web Scraping Tool:** The Agent can autonomously fetch and read real-time data from external URLs to analyze current security postures or external reports.
+* **Internal RAG Tool:** The Agent can cross-reference external findings with internal PostgreSQL vector data (PgVector) without human intervention.
+* **File System & Diagram Tool:** The Agent automatically translates its analytical findings into visual Mermaid.js architecture diagrams and saves them directly to the local file system.
+* **Security Review Workflow:** A complete end-to-end use case where the AI gathers external data, checks internal policies, identifies vulnerabilities, and outputs an executive summary alongside a generated threat diagram.
 
 
 ---
@@ -95,6 +101,8 @@ Transformed the LLM from a passive chatbot into an active **AI Agent** capable o
 | **Vector Database** | PostgreSQL, PgVector Extension             |
 | **AI Framework** | Spring AI (2.0.0-M5)                       |
 | **Embedding Model** | mxbai-embed-large (via Ollama)             |
+| **Workflow Engine** | Spring AI Chained Workflows                |
+| **Visualization**   | Mermaid.js (AI-Generated Architecture)     |
 
 ---
 ## 🧠 Advanced RAG Workflow (How it works)
@@ -137,6 +145,7 @@ Since the project uses a local LLM, you need to have Ollama installed and runnin
     * Advanced Ingest: `POST http://localhost:8082/api/spring-ai/advanced-ingest` | Ingests raw text, adds metadata (category/dept), and saves to PgVector. |
     * Advanced Ask: `GET http://localhost:8082/api/spring-ai/advanced-ask` | Queries the AI using Advanced RAG with strict metadata filtering. |
     * Agent Tool Calling: `GET http://localhost:8082/api/spring-ai/askAgent` | Triggers the AI Agent. The AI autonomously pauses, calls the backend Java method (`carStockCheckTool`) to fetch real database data, and returns an accurate response without hallucinating.
+    * Security Review Agent: `POST http://localhost:8082/api/spring-ai/agent/security-review` | Triggers a chained workflow. The Agent fetches data from the provided URL, cross-references with internal RAG, and generates a vulnerability report along with a Mermaid diagram saved to the local disk.
 
 
 ---
